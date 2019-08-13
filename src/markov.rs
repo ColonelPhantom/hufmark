@@ -10,7 +10,7 @@ pub fn history_fac(ago: usize) -> i64 {
 }
 
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 struct MarkovValue {
     possibilities: HashMap<char, i64>,
 }
@@ -19,6 +19,9 @@ impl MarkovValue {
         return Self {
             possibilities: HashMap::new()
         }
+    }
+    fn train(&mut self, outcome: PredictType, weight: i64) {
+        *self.possibilities.entry(outcome).or_default() += weight;
     }
 }
 impl std::ops::AddAssign for MarkovValue {
@@ -51,9 +54,11 @@ impl Markov {
     pub fn new() -> Self {
         Self {hist: HashMap::new()}
     }
-    pub fn train(&mut self, past: History<char>) {
+    pub fn train(&mut self, past: History<char>, outcome: char) {
+        // TODO: train based on older data (not just last character)
         for i in 0..past.cur_len() {
-            // self.hist.get_mut(&past.h)
+            let h = past.get_slice(i).to_vec();
+            self.hist.entry(h).or_default().train(outcome, history_fac(i));
         }
     }
 }
