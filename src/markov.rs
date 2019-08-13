@@ -5,14 +5,14 @@ type HistoryType = char;
 type PredictType = HistoryType;
 
 pub const HISTORY_LEN: usize = 16;
-pub fn history_fac(ago: usize) -> i64 {
-    2i64.pow((HISTORY_LEN - ago) as u32)
+pub fn history_fac(ago: usize) -> u32 {
+    2u32.pow((HISTORY_LEN - ago) as u32)
 }
 
 
 #[derive(Clone, Default)]
 struct MarkovValue {
-    possibilities: HashMap<char, i64>,
+    possibilities: HashMap<char, u32>,
 }
 impl MarkovValue {
     fn new() -> Self {
@@ -20,8 +20,8 @@ impl MarkovValue {
             possibilities: HashMap::new()
         }
     }
-    fn train(&mut self, outcome: PredictType, weight: i64) {
-        *self.possibilities.entry(outcome).or_default() += weight;
+    fn train(&mut self, outcome: PredictType) {
+        *self.possibilities.entry(outcome).or_default() += 1;
     }
 }
 impl std::ops::AddAssign for MarkovValue {
@@ -58,7 +58,7 @@ impl Markov {
         // TODO: train based on older data (not just last character)
         for i in 0..past.cur_len() {
             let h = past.get_slice(i).to_vec();
-            self.hist.entry(h).or_default().train(outcome, history_fac(i));
+            self.hist.entry(h).or_default().train(outcome);
         }
     }
 }
