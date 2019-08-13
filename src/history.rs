@@ -22,6 +22,9 @@ impl<T> History<T> {
             false => None
         }
     }
+    pub fn cur_len(&self) -> usize {
+        self.h.len()
+    }
 }
 impl<T> std::ops::Index<usize> for History<T> {
     type Output = T;

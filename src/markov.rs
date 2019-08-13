@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use super::history::History;
 
 type HistoryType = char;
 type PredictType = HistoryType;
@@ -50,7 +51,9 @@ impl Markov {
     pub fn new() -> Self {
         Self {hist: HashMap::new()}
     }
-    pub fn train(&mut self, past: crate::history::History<char>) {
-
+    pub fn train(&mut self, past: History<char>) {
+        for i in 0..past.cur_len() {
+            // self.hist.get_mut(&past.h)
+        }
     }
 }
