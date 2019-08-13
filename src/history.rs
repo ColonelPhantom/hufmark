@@ -1,12 +1,14 @@
+use slice_deque::SliceDeque;
+
 #[derive(Debug)]
 pub struct History<T> {
-    h: std::collections::VecDeque<T>,
+    h: SliceDeque<T>,
     len: usize
 }
 impl<T> History<T> {
     pub fn new(len: usize) -> Self {
         return Self {
-            h: std::collections::VecDeque::with_capacity(len + 1),
+            h: SliceDeque::with_capacity(len + 1),
             len
         }
     }
@@ -24,6 +26,9 @@ impl<T> History<T> {
     }
     pub fn cur_len(&self) -> usize {
         self.h.len()
+    }
+    pub fn get_slice(&self, len: usize) -> &[T] {
+        &self.h.as_slice()[..len]
     }
 }
 impl<T> std::ops::Index<usize> for History<T> {

@@ -5,3 +5,4 @@ authors = ["Quinten Kock <quintenkock@gmail.com>"]
 edition = "2018"
 
 [dependencies]
+slice-deque = "0.2.4"
