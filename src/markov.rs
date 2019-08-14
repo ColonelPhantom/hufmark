@@ -12,7 +12,7 @@ fn len_fac(len: usize) -> u32 {
 struct MarkovValue<T: Clone+Eq+Hash> {
     possibilities: HashMap<T, u32>,
 }
-impl<T: Clone+Eq+Hash> MarkovValue<T> {
+impl<T: Clone+Eq+Hash+Copy> MarkovValue<T> {
     fn new() -> Self {
         return Self {
             possibilities: HashMap::new()
@@ -21,50 +21,13 @@ impl<T: Clone+Eq+Hash> MarkovValue<T> {
     fn train(&mut self, outcome: T) {
         *self.possibilities.entry(outcome).or_default() += 1;
     }
-}
-impl<T: Clone+Eq+Hash> std::ops::AddAssign for MarkovValue<T> {
-    fn add_assign(&mut self, rhs: Self) {
-        for (key, lik) in rhs.possibilities {
-            *self.possibilities.entry(key).or_insert(0) += lik;
+    fn add_other(&mut self, other: &Self, weight: u32) {
+        for (key, lik) in &other.possibilities {
+            *self.possibilities.entry(*key).or_insert(0) += lik * weight;
         }
     }
 }
-impl<T: Clone+Eq+Hash> std::ops::Add for MarkovValue<T> {
-    type Output = Self;
-    fn add(self, rhs: Self) -> Self {
-        let mut new = self.clone();
-        new += rhs;
-        new
-    }
-}
-impl<T: Clone+Eq+Hash+Copy> std::ops::AddAssign<&Self> for MarkovValue<T> {
-    fn add_assign(&mut self, rhs: &Self) {
-        for (key, lik) in &rhs.possibilities {
-            *self.possibilities.entry(*key).or_insert(0) += lik;
-        }
-    }
-}
-impl<T: Clone+Eq+Hash+Copy> std::ops::Add<&Self> for MarkovValue<T> {
-    type Output = Self;
-    fn add(self, rhs: &Self) -> Self {
-        let mut new = self.clone();
-        new += rhs;
-        new
-    }
-}
-impl<T: Clone+Eq+Hash+Copy> std::ops::Mul<u32> for &MarkovValue<T> {
-    type Output = MarkovValue<T>;
-    fn mul(self, rhs: u32) -> MarkovValue<T> {
-        let new: HashMap<T, u32> = self.possibilities.iter()
-                .map(|(key, val)| {
-                    (*key, val * rhs) 
-                }).collect();
-        MarkovValue {
-            possibilities: new,
-        }
-    }
-}
-impl<T: Clone+Eq+Hash> std::default::Default for MarkovValue<T> {
+impl<T: Clone+Eq+Hash+Copy> std::default::Default for MarkovValue<T> {
     fn default() -> Self {
         Self::new()
     }
@@ -101,7 +64,7 @@ impl<T: Clone+Eq+Hash+Copy> Markov<T> {
         for i in 0..past.cur_len() {
             let h = past.get_slice(i).to_vec();
             match self.hist.get(&h) {
-                Some(m) => p += m * len_fac(i),
+                Some(m) => p.add_other(m, len_fac(i)),
                 None => {}
             }
         }
