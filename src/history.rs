@@ -37,11 +37,16 @@ impl<T> std::ops::Index<usize> for History<T> {
         &self.h[idx]
     }
 }
-impl<T: std::fmt::Display + Clone> std::fmt::Display for History<T> {
+impl<T: std::fmt::Display + Clone + Into<char>> std::fmt::Display for History<T> {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         let mut v = self.h.as_slice().to_vec();
         v.reverse();
-        for c in v {
+        for item in v {
+            let c = item.into();
+            if c == '\n' {
+                write!(f, " ")?;
+                continue;
+            }
             write!(f, "{}", c)?;
         }
         Ok(())
