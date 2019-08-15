@@ -21,7 +21,12 @@ impl<T: Clone+Eq+Hash+Copy> MarkovValue<T> {
     fn train(&mut self, outcome: T) {
         *self.possibilities.entry(outcome).or_default() += 1;
     }
+
+    #[inline(never)]
     fn add_other(&mut self, other: &Self, weight: u32) {
+        if self.possibilities.capacity() < std::cmp::max(self.possibilities.len(), other.possibilities.len()) * 2 {
+            self.possibilities.reserve(std::cmp::max(self.possibilities.len(), other.possibilities.len()) * 2 - self.possibilities.len());
+        }
         for (key, lik) in &other.possibilities {
             *self.possibilities.entry(*key).or_insert(0) += lik * weight;
         }
@@ -47,10 +52,11 @@ pub type Prediction<T> = Vec<(PredictType<T>, u32)>;
 pub struct Markov<T: Clone+Eq+Hash> {
     hist: HashMap<MarkovKey<T>, MarkovValue<T>>,
 }
-impl<T: Clone+Eq+Hash+Copy> Markov<T> {
+impl<T: Clone+Eq+Hash+Copy+PartialOrd> Markov<T> {
     pub fn new() -> Self {
         Self {hist: HashMap::new()}
     }
+    #[inline(never)]
     pub fn train(&mut self, past: &History<T>, outcome: T) {
         // TODO: train based on older data (not just last character)
         for i in 0..past.cur_len() {
@@ -58,6 +64,7 @@ impl<T: Clone+Eq+Hash+Copy> Markov<T> {
             self.hist.entry(h).or_default().train(outcome);
         }
     }
+    #[inline(never)]
     pub fn predict(&self, past: &History<T>) -> Prediction<T> {
         let mut p = MarkovValue::new();
         // TODO: predict based on stuff thats longer ago
@@ -69,8 +76,9 @@ impl<T: Clone+Eq+Hash+Copy> Markov<T> {
             }
         }
         let mut v: Prediction<T> = p.possibilities.into_iter()
-                .filter(|(_, val)| *val > 0)
+                // .filter(|(_, val)| *val > 0)
                 .collect();
+        v.sort_unstable_by(|(a, _), (b, _)| a.partial_cmp(b).unwrap());
         // The wrong order is so it sorts descending
         v.sort_by(|(_, a), (_, b)| b.partial_cmp(a).unwrap());
         v
