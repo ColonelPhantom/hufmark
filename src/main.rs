@@ -15,7 +15,9 @@ fn main() {
     let mut correct = 0;
     let mut wrong = 0;
 
-    let text: Vec<_> = std::fs::read(&args[1]).unwrap().into_iter().map(|c| c as char).collect();
+    let text: Vec<_> = std::fs::read(&args[1]).unwrap().into_iter()
+        .map(|c| c as char)
+        .collect();
     // let text_str = std::fs::read_to_string(&args[1]).unwrap();
     // let text = text_str.chars();
 
