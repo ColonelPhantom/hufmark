@@ -1,5 +1,5 @@
 [package]
-name = "byte-markov"
+name = "hufmark"
 version = "0.1.0"
 authors = ["Quinten Kock <quintenkock@gmail.com>"]
 edition = "2018"
