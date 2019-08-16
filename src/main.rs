@@ -15,7 +15,12 @@ fn main() {
     let mut correct = 0;
     let mut wrong = 0;
 
-    let text: Vec<_> = std::fs::read(&args[1]).unwrap().into_iter()
+    let fname = match args.get(1) {
+        Some(f) => f,
+        None => "enwik5.txt",
+    };
+
+    let text: Vec<_> = std::fs::read(fname).unwrap().into_iter()
         .map(|c| c as char)
         .collect();
     // let text_str = std::fs::read_to_string(&args[1]).unwrap();
@@ -32,6 +37,14 @@ fn main() {
             }
             None => {}
         }
+        match prediction_trimmed.get(0) {
+            Some((pc, _val)) => match *pc == c {
+                true => print!("1"),
+                false => print!("0"),
+            }
+            None => {}
+        }
+
         markov.train(&hist, c);
         hist.push(c);
     }
