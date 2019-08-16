@@ -1,2 +1,6 @@
 /target
 **/*.rs.bk
+enwik*.bz2
+enwik*.gz
+enwik*.lz4
+enwik*.xz
