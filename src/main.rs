@@ -37,13 +37,13 @@ fn main() {
             }
             None => {}
         }
-        match prediction_trimmed.get(0) {
-            Some((pc, _val)) => match *pc == c {
-                true => print!("1"),
-                false => print!("0"),
-            }
-            None => {}
-        }
+        // match prediction_trimmed.get(0) {
+        //     Some((pc, _val)) => match *pc == c {
+        //         true => print!("1"),
+        //         false => print!("0"),
+        //     }
+        //     None => {}
+        // }
 
         markov.train(&hist, c);
         hist.push(c);
