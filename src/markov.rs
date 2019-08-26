@@ -4,6 +4,7 @@ use super::history::History;
 
 fn len_fac(len: usize) -> u32 {
     len.pow(2) as u32
+    // 2u32.pow(len.pow(2) as u32) as u32
 }
 
 
@@ -66,17 +67,19 @@ impl<T: Clone+Eq+Hash+Copy+PartialOrd> Markov<T> {
     }
     #[inline(never)]
     pub fn predict(&self, past: &History<T>) -> Prediction<T> {
-        let mut p = MarkovValue::new();
+        let mut p = &MarkovValue::new();
         // TODO: predict based on stuff thats longer ago
         for i in 0..past.cur_len() {
             let h = past.get_slice(i).to_vec();
             match self.hist.get(&h) {
-                Some(m) => p.add_other(m, len_fac(i)),
+                // Some(m) => p.add_other(m, len_fac(i)),
+                Some(m) => p = m,
                 None => {}
             }
         }
-        let mut v: Prediction<T> = p.possibilities.into_iter()
+        let mut v: Prediction<T> = p.possibilities.iter()
                 // .filter(|(_, val)| *val > 0)
+                .map(|(a,b)| (*a,*b))
                 .collect();
         v.sort_unstable_by(|(a, _), (b, _)| a.partial_cmp(b).unwrap());
         // The wrong order is so it sorts descending
