@@ -3,7 +3,9 @@ use std::hash::Hash;
 use super::history::History;
 
 fn len_fac(len: usize) -> u32 {
-    len.pow(2) as u32
+    // len.pow(2) as u32
+    len as u32
+    // 2u32.pow(len as u32) as u32
 }
 
 
@@ -11,24 +13,29 @@ fn len_fac(len: usize) -> u32 {
 #[derive(Clone)]
 struct MarkovValue<T: Clone+Eq+Hash> {
     possibilities: HashMap<T, u32>,
+    total_occs: u32,
 }
 impl<T: Clone+Eq+Hash+Copy> MarkovValue<T> {
     fn new() -> Self {
         return Self {
-            possibilities: HashMap::new()
+            possibilities: HashMap::new(),
+            total_occs: 0,
         }
     }
     fn train(&mut self, outcome: T) {
-        *self.possibilities.entry(outcome).or_default() += 1;
+        let new = *self.possibilities.entry(outcome).or_default() + 1;
+        *self.possibilities.entry(outcome).or_default() = new;
+        self.total_occs += 1;
     }
 
     #[inline(never)]
-    fn add_other(&mut self, other: &Self, weight: u32) {
+    fn add_other(&mut self, other: &Self, weight: f64) {
         if self.possibilities.capacity() < std::cmp::max(self.possibilities.len(), other.possibilities.len()) * 2 {
             self.possibilities.reserve(std::cmp::max(self.possibilities.len(), other.possibilities.len()) * 2 - self.possibilities.len());
         }
         for (key, lik) in &other.possibilities {
-            *self.possibilities.entry(*key).or_insert(0) += lik * weight;
+            *self.possibilities.entry(*key).or_insert(0) += (*lik as f64 * weight) as u32;
+            self.total_occs += (*lik as f64 * weight) as u32;
         }
     }
 }
@@ -66,12 +73,26 @@ impl<T: Clone+Eq+Hash+Copy+PartialOrd> Markov<T> {
     }
     #[inline(never)]
     pub fn predict(&self, past: &History<T>) -> Prediction<T> {
-        let mut p = MarkovValue::new();
         // TODO: predict based on stuff thats longer ago
+
+        // Find max total_occs
+        let mut max_occs = 0;
+        for i in 0..past.cur_len() {
+            match self.hist.get(&past.get_slice(i).to_vec()) {
+                Some(m) => max_occs = std::cmp::max(max_occs, m.total_occs),
+                None => {}
+            }
+        }
+
+        // Create a prediction for the next value
+        let mut p = MarkovValue::new();
         for i in 0..past.cur_len() {
             let h = past.get_slice(i).to_vec();
             match self.hist.get(&h) {
-                Some(m) => p.add_other(m, len_fac(i)),
+                Some(m) => p.add_other(m, len_fac(i) as f64
+                      * (max_occs as f64 / m.total_occs as f64)
+                ),
+                // Some(m) => p = m.clone(),
                 None => {}
             }
         }
