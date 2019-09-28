@@ -23,8 +23,7 @@ impl<T: Clone+Eq+Hash+Copy> MarkovValue<T> {
         }
     }
     fn train(&mut self, outcome: T) {
-        let new = *self.possibilities.entry(outcome).or_default() + 1;
-        *self.possibilities.entry(outcome).or_default() = new;
+        *self.possibilities.entry(outcome).or_default() += 1;
         self.total_occs += 1;
     }
 
