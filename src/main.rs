@@ -17,7 +17,7 @@ fn main() {
 
     let fname = match args.get(1) {
         Some(f) => f,
-        None => "enwik5",
+        None => "data/enwik5",
     };
 
     let text: Vec<_> = std::fs::read(fname).unwrap().into_iter()
