@@ -4,6 +4,7 @@
 name = "hufmark"
 version = "0.1.0"
 dependencies = [
+ "plain-map 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "slice-deque 0.2.4 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
@@ -19,6 +20,11 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "libc 0.2.61 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
+
+[[package]]
+name = "plain-map"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
 name = "slice-deque"
@@ -52,6 +58,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 [metadata]
 "checksum libc 0.2.61 (registry+https://github.com/rust-lang/crates.io-index)" = "c665266eb592905e8503ba3403020f4b8794d26263f412ca33171600eca9a6fa"
 "checksum mach 0.2.3 (registry+https://github.com/rust-lang/crates.io-index)" = "86dd2487cdfea56def77b88438a2c915fb45113c5319bfe7e14306ca4cd0b0e1"
+"checksum plain-map 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)" = "70f67a7cff8d5b93a84c1340ec978dcf6829ecbc8f1707be86d293023459830a"
 "checksum slice-deque 0.2.4 (registry+https://github.com/rust-lang/crates.io-index)" = "ffddf594f5f597f63533d897427a570dbaa9feabaaa06595b74b71b7014507d7"
 "checksum winapi 0.3.7 (registry+https://github.com/rust-lang/crates.io-index)" = "f10e386af2b13e47c89e7236a7a14a086791a2b88ebad6df9bf42040195cf770"
 "checksum winapi-i686-pc-windows-gnu 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)" = "ac3b87c63620426dd9b991e5ce0329eff545bccbbb34f3be09ff6fb6ab51b7b6"

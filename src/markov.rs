@@ -1,5 +1,9 @@
-// use std::collections::HashMap;
-use crate::tuplemap::TupleMap as HashMap;
+use std::collections::HashMap;
+// use plain_map::PlainMap as HashMap;
+
+use plain_map::PlainMap;
+// use std::collections::HashMap as PlainMap;
+
 use std::hash::Hash;
 use super::history::History;
 
@@ -12,14 +16,14 @@ fn len_fac(len: usize) -> u32 {
 
 
 #[derive(Clone)]
-struct MarkovValue<T: Clone+Eq+Hash> {
-    possibilities: HashMap<T, u32>,
+pub struct MarkovValue<T: Clone+Eq+Hash> {
+    possibilities: PlainMap<T, u32>,
     total_occs: u32,
 }
 impl<T: Clone+Eq+Hash+Copy> MarkovValue<T> {
     fn new() -> Self {
         return Self {
-            possibilities: HashMap::new(),
+            possibilities: PlainMap::new(),
             total_occs: 0,
         }
     }
