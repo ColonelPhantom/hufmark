@@ -1,5 +1,6 @@
 mod markov;
 mod history;
+mod tuplemap;
 
 use history::History;
 use markov::Markov;
