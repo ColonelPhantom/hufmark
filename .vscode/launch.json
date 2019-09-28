@@ -7,15 +7,15 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug executable 'byte-markov'",
+            "name": "Debug executable 'hufmark'",
             "cargo": {
                 "args": [
                     "build",
-                    "--bin=byte-markov",
-                    "--package=byte-markov"
+                    "--bin=hufmark",
+                    "--package=hufmark"
                 ],
                 "filter": {
-                    "name": "byte-markov",
+                    "name": "hufmark",
                     "kind": "bin"
                 }
             },
@@ -25,16 +25,16 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug unit tests in executable 'byte-markov'",
+            "name": "Debug unit tests in executable 'hufmark'",
             "cargo": {
                 "args": [
                     "test",
                     "--no-run",
-                    "--bin=byte-markov",
-                    "--package=byte-markov"
+                    "--bin=hufmark",
+                    "--package=hufmark"
                 ],
                 "filter": {
-                    "name": "byte-markov",
+                    "name": "hufmark",
                     "kind": "bin"
                 }
             },
