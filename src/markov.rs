@@ -65,7 +65,7 @@ impl<T: Clone+Eq+Hash+Copy+PartialOrd> Markov<T> {
     #[inline(never)]
     pub fn train(&mut self, past: &History<T>, outcome: T) {
         // TODO: train based on older data (not just last character)
-        for i in 0..past.cur_len() {
+        for i in 1..=past.cur_len() {
             let h = past.get_slice(i).to_vec();
             self.hist.entry(h).or_default().train(outcome);
         }
@@ -76,7 +76,7 @@ impl<T: Clone+Eq+Hash+Copy+PartialOrd> Markov<T> {
 
         // Find max total_occs
         let mut max_occs = 0;
-        for i in 0..past.cur_len() {
+        for i in 1..=past.cur_len() {
             match self.hist.get(&past.get_slice(i).to_vec()) {
                 Some(m) => max_occs = std::cmp::max(max_occs, m.total_occs),
                 None => {}
@@ -85,7 +85,7 @@ impl<T: Clone+Eq+Hash+Copy+PartialOrd> Markov<T> {
 
         // Create a prediction for the next value
         let mut p = MarkovValue::new();
-        for i in 0..past.cur_len() {
+        for i in 1..=past.cur_len() {
             let h = past.get_slice(i).to_vec();
             match self.hist.get(&h) {
                 Some(m) => p.add_other(m, len_fac(i) as f64
