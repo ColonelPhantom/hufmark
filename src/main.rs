@@ -8,6 +8,8 @@ pub type HistoryType = char;
 
 
 fn main() {
+    println!("{}", std::mem::size_of::<std::collections::HashMap<char, f64>>());
+    
     let args: Vec<String> = std::env::args().collect();
     
     let mut hist = History::new(20);
