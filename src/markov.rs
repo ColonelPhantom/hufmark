@@ -1,4 +1,5 @@
-use std::collections::HashMap;
+// use std::collections::HashMap;
+use crate::tuplemap::TupleMap as HashMap;
 use std::hash::Hash;
 use super::history::History;
 
@@ -29,10 +30,7 @@ impl<T: Clone+Eq+Hash+Copy> MarkovValue<T> {
 
     #[inline(never)]
     fn add_other(&mut self, other: &Self, weight: f64) {
-        if self.possibilities.capacity() < std::cmp::max(self.possibilities.len(), other.possibilities.len()) * 2 {
-            self.possibilities.reserve(std::cmp::max(self.possibilities.len(), other.possibilities.len()) * 2 - self.possibilities.len());
-        }
-        for (key, lik) in &other.possibilities {
+        for (key, lik) in other.possibilities.iter() {
             *self.possibilities.entry(*key).or_insert(0) += (*lik as f64 * weight) as u32;
             self.total_occs += (*lik as f64 * weight) as u32;
         }
@@ -106,14 +104,14 @@ impl<T: Clone+Eq+Hash+Copy+PartialOrd> Markov<T> {
     }
     pub fn get_entry_occs(&self) -> std::collections::BTreeMap<u32, u32> {
         let mut result = std::collections::BTreeMap::new();
-        for (_,h) in &self.hist {
+        for (_,h) in self.hist.iter() {
             *result.entry(h.total_occs).or_default() += 1;
         }
         result
     }
     pub fn get_entry_lens(&self) -> std::collections::BTreeMap<usize, u32> {
         let mut result = std::collections::BTreeMap::new();
-        for (_,h) in &self.hist {
+        for (_,h) in self.hist.iter() {
             *result.entry(h.possibilities.len()).or_default() += 1;
         }
         result
