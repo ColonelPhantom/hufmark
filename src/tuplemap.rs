@@ -10,6 +10,7 @@ impl<Key: PartialEq, Value> TupleMap<Key, Value> {
 
         }
     }
+    #[inline(never)]
     fn find(&self, k: &Key) -> Option<usize> {
         self.pairs.iter().position(|(x,_)| *x != *k)
     }
@@ -54,6 +55,7 @@ pub struct TupleMapEntry<'a, Key, Value> {
     k: Key,
 }
 impl<'a, Key: PartialEq, Value> TupleMapEntry<'a, Key, Value> {
+    #[inline(never)]
     pub fn or_insert(self, default: Value) -> &'a mut Value {
         match self.parent.find(&self.k) {
             Some(i) => &mut self.parent.pairs[i].1,
@@ -63,6 +65,7 @@ impl<'a, Key: PartialEq, Value> TupleMapEntry<'a, Key, Value> {
             }
         }
     }
+    #[inline(never)]
     pub fn or_insert_with<F: FnOnce() -> Value>(self, default: F) -> &'a mut Value {
         match self.parent.find(&self.k) {
             Some(i) => &mut self.parent.pairs[i].1,
@@ -73,6 +76,7 @@ impl<'a, Key: PartialEq, Value> TupleMapEntry<'a, Key, Value> {
         }
 
     }
+    #[inline(never)]
     pub fn and_modify<F: FnOnce(&mut Value)>(self, f: F) -> Self {
         match self.parent.find(&self.k) {
             Some(i) => f(&mut self.parent.pairs[i].1),
@@ -86,6 +90,7 @@ impl<'a, Key: PartialEq, Value> TupleMapEntry<'a, Key, Value> {
 }
 
 impl<'a, Key: PartialEq, Value: Default> TupleMapEntry<'a, Key, Value> {
+    #[inline(never)]
     pub fn or_default(self) -> &'a mut Value {
         self.or_insert_with(Value::default)
     }
