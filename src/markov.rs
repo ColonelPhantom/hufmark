@@ -104,4 +104,18 @@ impl<T: Clone+Eq+Hash+Copy+PartialOrd> Markov<T> {
         v.sort_by(|(_, a), (_, b)| b.partial_cmp(a).unwrap());
         v
     }
+    pub fn get_entry_occs(&self) -> std::collections::BTreeMap<u32, u32> {
+        let mut result = std::collections::BTreeMap::new();
+        for (_,h) in &self.hist {
+            *result.entry(h.total_occs).or_default() += 1;
+        }
+        result
+    }
+    pub fn get_entry_lens(&self) -> std::collections::BTreeMap<usize, u32> {
+        let mut result = std::collections::BTreeMap::new();
+        for (_,h) in &self.hist {
+            *result.entry(h.possibilities.len()).or_default() += 1;
+        }
+        result
+    }
 }

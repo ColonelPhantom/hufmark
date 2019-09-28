@@ -51,4 +51,11 @@ fn main() {
         hist.push(c);
     }
     println!("Correct {}, wrong {}", correct, wrong);
+    for (f, occs) in markov.get_entry_occs() {
+        println!("Frequency {} happened {} times", f, occs);
+    }
+    for (l, occs) in markov.get_entry_lens() {
+        println!("Len {} happened {} times", l, occs);
+    }
+
 }
