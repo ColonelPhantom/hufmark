@@ -50,12 +50,15 @@ fn main() {
         markov.train(&hist, c);
         hist.push(c);
     }
+    // println!();
+
+
     println!("Correct {}, wrong {}", correct, wrong);
-    for (f, occs) in markov.get_entry_occs() {
-        println!("Frequency {} happened {} times", f, occs);
-    }
-    for (l, occs) in markov.get_entry_lens() {
-        println!("Len {} happened {} times", l, occs);
-    }
+    // for (f, occs) in markov.get_entry_occs() {
+    //     println!("Frequency {} happened {} times", f, occs);
+    // }
+    // for (l, occs) in markov.get_entry_lens() {
+    //     println!("Len {} happened {} times", l, occs);
+    // }
 
 }
