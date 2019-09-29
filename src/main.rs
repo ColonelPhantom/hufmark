@@ -6,16 +6,14 @@ use markov::Markov;
 
 pub type HistoryType = char;
 
+const HIST_LEN: usize = 10;
+
 
 fn main() {
     println!("{}", std::mem::size_of::<std::collections::HashMap<char, f64>>());
     
     let args: Vec<String> = std::env::args().collect();
     
-    let mut hist = History::new(20);
-    let mut markov = Markov::new();
-    let mut correct = 0;
-    let mut wrong = 0;
 
     let fname = match args.get(1) {
         Some(f) => f,
@@ -27,6 +25,13 @@ fn main() {
         .collect();
     // let text_str = std::fs::read_to_string(&args[1]).unwrap();
     // let text = text_str.chars();
+
+    let mut hist = History::new(HIST_LEN);
+    let mut markov = Markov::with_capacity(HIST_LEN/2 * text.len());
+    // let mut markov = Markov::new();
+    let mut correct = 0;
+    let mut wrong = 0;
+
 
     for c in text {
         let prediction = markov.predict(&hist);
