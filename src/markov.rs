@@ -121,8 +121,11 @@ impl<T: Clone+Eq+Hash+Copy+PartialOrd +Ord+std::fmt::Display+std::fmt::Debug> Ma
                                 mv.full_key = None;
                             }
                         }
-                        None => {}
+                        None => {
+                            // The entry is not a shorthand: train it regularly like a branch node
+                            mv.train(outcome);
                     }
+                }
                 }
                 std::collections::hash_map::Entry::Vacant(e) => {
                     // We will create a new entry
