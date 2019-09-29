@@ -1,4 +1,5 @@
-use std::collections::HashMap;
+// use std::collections::HashMap;
+use fnv::FnvHashMap as HashMap;
 // use std::collections::BTreeMap as HashMap;
 // use plain_map::PlainMap as HashMap;
 
@@ -35,6 +36,7 @@ impl<T: Clone+Eq+Hash+Copy> MarkovValue<T> {
 
     #[inline(never)]
     fn add_other(&mut self, other: &Self, weight: f64) {
+        // self.possibilities.reserve(other.possibilities.len());
         for (key, lik) in other.possibilities.iter() {
             *self.possibilities.entry(*key).or_insert(0) += (*lik as f64 * weight) as u32;
             self.total_occs += (*lik as f64 * weight) as u32;
@@ -63,7 +65,10 @@ pub struct Markov<T: Clone+Eq+Hash> {
 }
 impl<T: Clone+Eq+Hash+Copy+PartialOrd+Ord> Markov<T> {
     pub fn new() -> Self {
-        Self {hist: HashMap::new()}
+        Self {hist: HashMap::default()}
+    }
+    pub fn with_capacity(cap: usize) -> Self {
+        Self {hist: HashMap::with_capacity_and_hasher(cap, Default::default())}
     }
     #[inline(never)]
     pub fn train(&mut self, past: &History<T>, outcome: T) {
