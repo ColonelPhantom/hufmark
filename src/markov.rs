@@ -112,6 +112,7 @@ impl<T: Clone+Eq+Hash+Copy+PartialOrd +Ord+std::fmt::Display+std::fmt::Debug> Ma
 
                                 // First, copy it out with an additional character (if possible)
                                 if i < k.len() {
+                                    // Yes, it is possible. Continue.
                                     to_insert = Some((k[..i+1].to_vec(), mv.clone()));
                                 }
 
@@ -165,7 +166,7 @@ impl<T: Clone+Eq+Hash+Copy+PartialOrd +Ord+std::fmt::Display+std::fmt::Debug> Ma
                     if let Some(l) = hists.last() {
                         if let Some(entry) = l {
                             if let Some(full_key) = &entry.full_key {
-                                if full_key.len() > i && &full_key[..i] == past_slice {
+                                if full_key.len() >= i && &full_key[..i] == past_slice {
                                     // The previous hist entry is also applicable for this one
                                     hists.push(*hists.last().unwrap());
                                     continue 'inclen;
