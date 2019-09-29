@@ -63,7 +63,7 @@ impl<T: Clone+Eq+Hash+Copy+std::fmt::Debug> std::default::Default for MarkovValu
 //     values: [char; HISTORY_LEN],
 // }
 
-type MarkovKey<T> = Vec<T>;
+type MarkovKey<T> = Box<[T]>;
 pub type PredictType<T> = T;
 
 
@@ -83,8 +83,8 @@ impl<T: Clone+Eq+Hash+Copy+PartialOrd +Ord+std::fmt::Display+std::fmt::Debug> Ma
     pub fn train(&mut self, past: &History<T>, outcome: T) {
         // TODO: train based on older data (not just last character)
         for i in 0..=past.cur_len() {
-            let h = past.get_slice(i).to_vec();
-            self.hist.entry(h).or_default().train(outcome);
+            let h = past.get_slice(i);
+            self.hist.entry(Box::from(h)).or_default().train(outcome);
         }
     }
     #[inline(never)]
@@ -94,7 +94,7 @@ impl<T: Clone+Eq+Hash+Copy+PartialOrd +Ord+std::fmt::Display+std::fmt::Debug> Ma
         // Find the appropriate history entries, cache them in a Vec to reduce hashtable retrieves
         let mut hists = Vec::with_capacity(past.cur_len());
         for i in 0..=past.cur_len() {
-            hists.push(self.hist.get(&past.get_slice(i).to_vec()));
+            hists.push(self.hist.get(past.get_slice(i)));
         }
 
         // println!("\nPREDICT HISTS");

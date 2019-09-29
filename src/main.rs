@@ -62,4 +62,11 @@ fn main() {
 
     // std::io::stdin().read_line(&mut String::new());
 
+    println!("MarkovValue size: {}", std::mem::size_of::<markov::MarkovValue<char>>());
+    println!("OptionVec size: {}", std::mem::size_of::<Option<Vec<char>>>());
+    println!("OptionBox size: {}", std::mem::size_of::<Option<Box<[char]>>>());
+    println!("BoxArray size: {}", std::mem::size_of::<Box<[char]>>());
+    
+
 }
+    
