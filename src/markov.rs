@@ -96,13 +96,15 @@ impl<T: Clone+Eq+Hash+Copy+PartialOrd +Ord+std::fmt::Display+std::fmt::Debug> Ma
         for i in 0..=past.cur_len() {
             hists.push(self.hist.get(&past.get_slice(i).to_vec()));
         }
-        println!("\nPREDICT HISTS");
-        for (i,h) in hists.iter().enumerate() {
-            match h {
-                Some(h) => println!("{:?} {:?}", &past.get_slice(i), h),
-                None => println!("NONE")
-            };
-        }
+
+        // println!("\nPREDICT HISTS");
+        // for (i,h) in hists.iter().enumerate() {
+        //     match h {
+        //         Some(h) => println!("{:?} {:?}", &past.get_slice(i), h),
+        //         None => println!("NONE")
+        //     };
+        // }
+        
         // Find max total_occs
         let mut max_occs = 0;
         for h in hists.iter() {
