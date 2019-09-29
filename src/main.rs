@@ -31,6 +31,7 @@ fn main() {
     // let mut markov = Markov::new();
     let mut correct = 0;
     let mut wrong = 0;
+    let mut unknown = 0;
 
 
     for c in text {
@@ -42,7 +43,7 @@ fn main() {
                 true => correct += 1,
                 false => wrong += 1,
             }
-            None => {}
+            None => unknown += 1,
         }
         // match prediction_trimmed.get(0) {
         //     Some((pc, _val)) => match *pc == c {
@@ -59,7 +60,7 @@ fn main() {
     // println!();
 
 
-    println!("Correct {}, wrong {}", correct, wrong);
+    println!("Correct {}, wrong {}, unknown {}", correct, wrong, unknown);
     // for (f, occs) in markov.get_entry_occs() {
     //     println!("Frequency {} happened {} times", f, occs);
     // }
