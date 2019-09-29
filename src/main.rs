@@ -29,7 +29,7 @@ fn main() {
     // let text = text_str.chars();
 
     let mut hist = History::new(HIST_LEN);
-    let mut markov = Markov::with_capacity(HIST_LEN/2 * text.len());
+    let mut markov = Markov::with_capacity(text.len());
     // let mut markov = Markov::new();
     let mut correct = [0; PREDICT_TRIES];
     let mut wrong = 0;
