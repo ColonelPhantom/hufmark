@@ -58,8 +58,10 @@ fn main() {
     //     println!("Len {} happened {} times", l, occs);
     // }
 
-    println!("Table pressure: {}/{}", markov.get_len(), markov.get_capacity());
+    // println!("Table pressure: {}/{}", markov.get_len(), markov.get_capacity());
 
-    // std::io::stdin().read_line(&mut String::new());
+    // println!("{:?}", markov);
+
+    std::io::stdin().read_line(&mut String::new()).unwrap();
 
 }

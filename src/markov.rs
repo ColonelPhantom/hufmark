@@ -29,12 +29,15 @@ use derivative::Derivative;
 pub struct MarkovValue<T: Clone+Eq+Hash+std::fmt::Debug> {
     possibilities: PlainMap<T, u32>,
     total_occs: u32,
+    #[derivative(Debug="ignore")]
+    pub full_key: Option<MarkovKey<T>>,
 }
 impl<T: Clone+Eq+Hash+Copy+std::fmt::Debug> MarkovValue<T> {
     fn new() -> Self {
         return Self {
             possibilities: PlainMap::new(),
             total_occs: 0,
+            full_key: None,
         }
     }
     fn train(&mut self, outcome: T) {
@@ -82,9 +85,52 @@ impl<T: Clone+Eq+Hash+Copy+PartialOrd +Ord+std::fmt::Display+std::fmt::Debug> Ma
     #[inline(never)]
     pub fn train(&mut self, past: &History<T>, outcome: T) {
         // TODO: train based on older data (not just last character)
-        for i in 0..=past.cur_len() {
+
+        'inclen: for i in 0..=past.cur_len() {
             let h = past.get_slice(i).to_vec();
-            self.hist.entry(h).or_default().train(outcome);
+            // self.hist.entry(h).or_default().train(outcome);
+
+            let mut to_insert = None;
+
+            match self.hist.entry(h) {
+                std::collections::hash_map::Entry::Occupied(mut e) => {
+                    let mv = e.get_mut();
+                    // mv.train(outcome);
+
+                    match &mv.full_key {
+                        Some(k) => {
+                            if k.as_slice() == past.get_slice(past.cur_len()) {
+                                mv.train(outcome);
+                                break 'inclen;
+                            } else {
+                                // This entry will be 'split'.
+                                // Copy this one with a longer length
+                                if i < k.len() {
+                                    to_insert = Some((k[..i+1].to_vec(), mv.clone()));
+                                }
+                                // Train after copy
+                                mv.train(outcome);
+                                // Remove the full key as this has multiple 'children' now
+                                mv.full_key = None;
+                            }
+                        }
+                        None => {}
+                    }
+                }
+                std::collections::hash_map::Entry::Vacant(e) => {
+                    let mut new_mv: MarkovValue<T> = MarkovValue::default();
+                    if i < past.cur_len() {
+                        new_mv.full_key = Some(past.get_slice(past.cur_len()).to_vec());
+                    }
+                    new_mv.train(outcome);
+                    e.insert(new_mv);
+                    break 'inclen;
+                }
+            }
+
+            if let Some((k,v)) = to_insert {
+                self.hist.insert(k,v);
+            }
         }
     }
     #[inline(never)]
@@ -94,7 +140,23 @@ impl<T: Clone+Eq+Hash+Copy+PartialOrd +Ord+std::fmt::Display+std::fmt::Debug> Ma
         // Find the appropriate history entries, cache them in a Vec to reduce hashtable retrieves
         let mut hists = Vec::with_capacity(past.cur_len());
         for i in 0..=past.cur_len() {
-            hists.push(self.hist.get(&past.get_slice(i).to_vec()));
+            let past_slice = past.get_slice(i);
+            match self.hist.get(&past_slice.to_vec()) {
+                Some(h) => hists.push(Some(h)),
+                None => {
+                    if let Some(l) = hists.last() {
+                        if let Some(entry) = l {
+                            if let Some(full_key) = &entry.full_key {
+                                if full_key.len() > i && &full_key[..i] == past_slice {
+                                    // The previous hist entry is also applicable for this one
+                                    hists.push(*hists.last().unwrap());
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            // hists.push(self.hist.get(&past.get_slice(i).to_vec()));
         }
 
         // println!("\nPREDICT HISTS");
