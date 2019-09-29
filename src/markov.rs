@@ -23,12 +23,12 @@ fn len_fac(len: usize) -> u32 {
 
 
 
-#[derive(Clone)]
-pub struct MarkovValue<T: Clone+Eq+Hash> {
+#[derive(Clone, Debug)]
+pub struct MarkovValue<T: Clone+Eq+Hash+std::fmt::Debug> {
     possibilities: PlainMap<T, u32>,
     total_occs: u32,
 }
-impl<T: Clone+Eq+Hash+Copy> MarkovValue<T> {
+impl<T: Clone+Eq+Hash+Copy+std::fmt::Debug> MarkovValue<T> {
     fn new() -> Self {
         return Self {
             possibilities: PlainMap::new(),
@@ -50,7 +50,7 @@ impl<T: Clone+Eq+Hash+Copy> MarkovValue<T> {
         }
     }
 }
-impl<T: Clone+Eq+Hash+Copy> std::default::Default for MarkovValue<T> {
+impl<T: Clone+Eq+Hash+Copy+std::fmt::Debug> std::default::Default for MarkovValue<T> {
     fn default() -> Self {
         Self::new()
     }
@@ -67,10 +67,10 @@ pub type PredictType<T> = T;
 
 pub type Prediction<T> = Vec<(PredictType<T>, u32)>;
 
-pub struct Markov<T: Clone+Eq+Hash> {
+pub struct Markov<T: Clone+Eq+Hash+std::fmt::Debug> {
     hist: HashMap<MarkovKey<T>, MarkovValue<T>>,
 }
-impl<T: Clone+Eq+Hash+Copy+PartialOrd +Ord+std::fmt::Display> Markov<T> {
+impl<T: Clone+Eq+Hash+Copy+PartialOrd +Ord+std::fmt::Display+std::fmt::Debug> Markov<T> {
     pub fn new() -> Self {
         Self {hist: HashMap::default()}
     }
@@ -93,6 +93,13 @@ impl<T: Clone+Eq+Hash+Copy+PartialOrd +Ord+std::fmt::Display> Markov<T> {
         let mut hists = Vec::with_capacity(past.cur_len());
         for i in 0..=past.cur_len() {
             hists.push(self.hist.get(&past.get_slice(i).to_vec()));
+        }
+        println!("\nPREDICT HISTS");
+        for (i,h) in hists.iter().enumerate() {
+            match h {
+                Some(h) => println!("{:?} {:?}", &past.get_slice(i), h),
+                None => println!("NONE")
+            };
         }
         // Find max total_occs
         let mut max_occs = 0;

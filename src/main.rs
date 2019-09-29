@@ -45,13 +45,13 @@ fn main() {
             }
             None => unknown += 1,
         }
-        // match prediction_trimmed.get(0) {
-        //     Some((pc, _val)) => match *pc == c {
-        //         true => print!("1"),
-        //         false => print!("0"),
-        //     }
-        //     None => {}
-        // }
+        match prediction_trimmed.get(0) {
+            Some((pc, _val)) => match *pc == c {
+                true => println!("1"),
+                false => println!("0"),
+            }
+            None => {}
+        }
 
         // println!("Table pressure: {}/{}", markov.get_len(), markov.get_capacity());
         markov.train(&hist, c);
