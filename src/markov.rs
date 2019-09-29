@@ -22,8 +22,10 @@ fn len_fac(len: usize) -> u32 {
 }
 
 
+use derivative::Derivative;
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Derivative)]
+#[derivative(Debug)]
 pub struct MarkovValue<T: Clone+Eq+Hash+std::fmt::Debug> {
     possibilities: PlainMap<T, u32>,
     total_occs: u32,

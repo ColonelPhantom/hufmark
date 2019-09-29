@@ -9,6 +9,7 @@ slice-deque = "0.2.4"
 plain-map = "0.*"
 # plain-map = {path = "../../plain-map"}
 fnv="1.0.*"
+derivative = "1.0.3"
 
 [profile.release]
 opt-level = 3
