@@ -58,16 +58,16 @@ fn main() {
     //     println!("Len {} happened {} times", l, occs);
     // }
 
-    println!("Table pressure: {}/{}", markov.get_len(), markov.get_capacity());
+    // println!("Table pressure: {}/{}", markov.get_len(), markov.get_capacity());
 
-    // println!("{:?}", markov);
+    // // println!("{:?}", markov);
 
-    std::io::stdin().read_line(&mut String::new()).unwrap();
+    // std::io::stdin().read_line(&mut String::new()).unwrap();
 
-    println!("MarkovValue size: {}", std::mem::size_of::<markov::MarkovValue<char>>());
-    println!("OptionVec size: {}", std::mem::size_of::<Option<Vec<char>>>());
-    println!("OptionBox size: {}", std::mem::size_of::<Option<Box<[char]>>>());
-    println!("BoxArray size: {}", std::mem::size_of::<Box<[char]>>());
+    // println!("MarkovValue size: {}", std::mem::size_of::<markov::MarkovValue<char>>());
+    // println!("OptionVec size: {}", std::mem::size_of::<Option<Vec<char>>>());
+    // println!("OptionBox size: {}", std::mem::size_of::<Option<Box<[char]>>>());
+    // println!("BoxArray size: {}", std::mem::size_of::<Box<[char]>>());
     
 
 }
