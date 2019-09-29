@@ -66,7 +66,7 @@ impl<T: Clone+Eq+Hash+Copy+std::fmt::Debug> std::default::Default for MarkovValu
 //     values: [char; HISTORY_LEN],
 // }
 
-type MarkovKey<T> = Vec<T>;
+type MarkovKey<T> = Box<[T]>;
 pub type PredictType<T> = T;
 
 
@@ -87,12 +87,12 @@ impl<T: Clone+Eq+Hash+Copy+PartialOrd +Ord+std::fmt::Display+std::fmt::Debug> Ma
         // TODO: train based on older data (not just last character)
 
         'inclen: for i in 0..=past.cur_len() {
-            let h = past.get_slice(i).to_vec();
+            let h = past.get_slice(i);
             // self.hist.entry(h).or_default().train(outcome);
 
             let mut to_insert = None;
 
-            match self.hist.entry(h) {
+            match self.hist.entry(Box::from(h)) {
                 std::collections::hash_map::Entry::Occupied(mut e) => {
                     let mv = e.get_mut();
                     // mv.train(outcome);
@@ -100,7 +100,7 @@ impl<T: Clone+Eq+Hash+Copy+PartialOrd +Ord+std::fmt::Display+std::fmt::Debug> Ma
                     match &mv.full_key {
                         Some(k) => {
                             // The entry is a 'shorthand' entry (ie. it is for ello but also represents hello)
-                            if k.as_slice() == past.get_slice(past.cur_len()) {
+                            if k.as_ref() == past.get_slice(past.cur_len()) {
                                 // The shorthand stays valid
                                 mv.train(outcome);
                                 // Since we do not need any longer values to represent this, break.
@@ -133,7 +133,7 @@ impl<T: Clone+Eq+Hash+Copy+PartialOrd +Ord+std::fmt::Display+std::fmt::Debug> Ma
                     let mut new_mv: MarkovValue<T> = MarkovValue::default();
                     if i < past.cur_len() {
                         // We can create a shorthand entry to save memory.
-                        new_mv.full_key = Some(past.get_slice(past.cur_len()).to_vec());
+                        new_mv.full_key = Some(Box::from(past.get_slice(past.cur_len())));
                     }
                     // Make sure the new entry is properly trained
                     new_mv.train(outcome);
@@ -147,7 +147,7 @@ impl<T: Clone+Eq+Hash+Copy+PartialOrd +Ord+std::fmt::Display+std::fmt::Debug> Ma
             
             // We could not store the extended shorthand in the match, so do it now.
             if let Some((k,v)) = to_insert {
-                self.hist.insert(k,v);
+                self.hist.insert(Box::from(k.as_slice()),v);
             }
         }
     }
@@ -159,7 +159,7 @@ impl<T: Clone+Eq+Hash+Copy+PartialOrd +Ord+std::fmt::Display+std::fmt::Debug> Ma
         let mut hists = Vec::with_capacity(past.cur_len());
         'inclen: for i in 0..=past.cur_len() {
             let past_slice = past.get_slice(i);
-            match self.hist.get(&past_slice.to_vec()) {
+            match self.hist.get(past_slice) {
                 Some(h) => hists.push(Some(h)),
                 None => {
                     // There is no matching entry found: try to see if the last entry was a shorthand and if so, reuse it.
