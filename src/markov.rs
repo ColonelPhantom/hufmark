@@ -99,18 +99,25 @@ impl<T: Clone+Eq+Hash+Copy+PartialOrd +Ord+std::fmt::Display+std::fmt::Debug> Ma
 
                     match &mv.full_key {
                         Some(k) => {
+                            // The entry is a 'shorthand' entry (ie. it is for ello but also represents hello)
                             if k.as_slice() == past.get_slice(past.cur_len()) {
+                                // The shorthand stays valid
                                 mv.train(outcome);
+                                // Since we do not need any longer values to represent this, break.
                                 break 'inclen;
                             } else {
-                                // This entry will be 'split'.
-                                // Copy this one with a longer length
+                                // The shorthand is no longer valid as there will be a second value represented
+                                // Eg ello now not only represents hello but also jello
+                                // Therefore, this entry will be 'split'.
+
+                                // First, copy it out with an additional character (if possible)
                                 if i < k.len() {
                                     to_insert = Some((k[..i+1].to_vec(), mv.clone()));
                                 }
-                                // Train after copy
+
+                                // Then, train the one that will stay in this slot
                                 mv.train(outcome);
-                                // Remove the full key as this has multiple 'children' now
+                                // Remove the full key as this has multiple 'children' now and is not a shorthand anymore.
                                 mv.full_key = None;
                             }
                         }
@@ -118,16 +125,23 @@ impl<T: Clone+Eq+Hash+Copy+PartialOrd +Ord+std::fmt::Display+std::fmt::Debug> Ma
                     }
                 }
                 std::collections::hash_map::Entry::Vacant(e) => {
+                    // We will create a new entry
                     let mut new_mv: MarkovValue<T> = MarkovValue::default();
                     if i < past.cur_len() {
+                        // We can create a shorthand entry to save memory.
                         new_mv.full_key = Some(past.get_slice(past.cur_len()).to_vec());
                     }
+                    // Make sure the new entry is properly trained
                     new_mv.train(outcome);
+                    // and finally insert it.
                     e.insert(new_mv);
+
+                    // Since this has to be a leaf node, we do not need to store any longer nodes.
                     break 'inclen;
                 }
             }
-
+            
+            // We could not store the extended shorthand in the match, so do it now.
             if let Some((k,v)) = to_insert {
                 self.hist.insert(k,v);
             }
@@ -139,21 +153,26 @@ impl<T: Clone+Eq+Hash+Copy+PartialOrd +Ord+std::fmt::Display+std::fmt::Debug> Ma
 
         // Find the appropriate history entries, cache them in a Vec to reduce hashtable retrieves
         let mut hists = Vec::with_capacity(past.cur_len());
-        for i in 0..=past.cur_len() {
+        'inclen: for i in 0..=past.cur_len() {
             let past_slice = past.get_slice(i);
             match self.hist.get(&past_slice.to_vec()) {
                 Some(h) => hists.push(Some(h)),
                 None => {
+                    // There is no matching entry found: try to see if the last entry was a shorthand and if so, reuse it.
                     if let Some(l) = hists.last() {
                         if let Some(entry) = l {
                             if let Some(full_key) = &entry.full_key {
                                 if full_key.len() > i && &full_key[..i] == past_slice {
                                     // The previous hist entry is also applicable for this one
                                     hists.push(*hists.last().unwrap());
+                                    continue 'inclen;
                                 }
                             }
                         }
                     }
+                    // The last history entry deviates from our current entry. As such just push an empty one
+                    // (break would also be a possibility)
+                    hists.push(None);
                 }
             }
             // hists.push(self.hist.get(&past.get_slice(i).to_vec()));
