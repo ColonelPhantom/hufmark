@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+// use std::collections::BTreeMap as HashMap;
 // use plain_map::PlainMap as HashMap;
 
 use plain_map::PlainMap;
@@ -60,7 +61,7 @@ pub type Prediction<T> = Vec<(PredictType<T>, u32)>;
 pub struct Markov<T: Clone+Eq+Hash> {
     hist: HashMap<MarkovKey<T>, MarkovValue<T>>,
 }
-impl<T: Clone+Eq+Hash+Copy+PartialOrd> Markov<T> {
+impl<T: Clone+Eq+Hash+Copy+PartialOrd+Ord> Markov<T> {
     pub fn new() -> Self {
         Self {hist: HashMap::new()}
     }
@@ -119,5 +120,11 @@ impl<T: Clone+Eq+Hash+Copy+PartialOrd> Markov<T> {
             *result.entry(h.possibilities.len()).or_default() += 1;
         }
         result
+    }
+    pub fn get_capacity(&self) -> usize {
+        self.hist.capacity()
+    }
+    pub fn get_len(&self) -> usize {
+        self.hist.len()
     }
 }

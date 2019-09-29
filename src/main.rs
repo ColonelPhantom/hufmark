@@ -47,6 +47,7 @@ fn main() {
         //     None => {}
         // }
 
+        // println!("Table pressure: {}/{}", markov.get_len(), markov.get_capacity());
         markov.train(&hist, c);
         hist.push(c);
     }
@@ -60,5 +61,9 @@ fn main() {
     // for (l, occs) in markov.get_entry_lens() {
     //     println!("Len {} happened {} times", l, occs);
     // }
+
+    println!("Table pressure: {}/{}", markov.get_len(), markov.get_capacity());
+
+    // std::io::stdin().read_line(&mut String::new());
 
 }
