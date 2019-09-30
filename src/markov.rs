@@ -44,12 +44,15 @@ impl<T: Clone+Eq+Hash+Copy+std::fmt::Debug> MarkovValue<T> {
 
     #[inline(never)]
     fn add_other(&mut self, other: &Self, weight: u32) {
-        self.possibilities.reserve(other.possibilities.len());
-        for (key, lik) in other.possibilities.iter() {
-            // *self.possibilities.entry(*key).or_insert(0) += (*lik as f64 * weight) as u32;
-            *self.possibilities.entry(*key).or_insert(0) += *lik * weight;
-            self.total_occs += *lik * weight;
+        let mut new_p = other.possibilities.clone();
+        for (_, val) in new_p.iter_mut() {
+            *val *= weight;
         }
+        for (key, lik_self) in self.possibilities.iter() {
+            *new_p.entry(*key).or_insert(0) += lik_self;
+        }
+        self.possibilities = new_p;
+        self.total_occs += other.total_occs * weight;
     }
 }
 impl<T: Clone+Eq+Hash+Copy+std::fmt::Debug> std::default::Default for MarkovValue<T> {
@@ -117,7 +120,7 @@ impl<T: Clone+Eq+Hash+Copy+PartialOrd +Ord+std::fmt::Display+std::fmt::Debug> Ma
 
         // Create a prediction for the next value
         let mut p = &mut MarkovValue::new();
-        for (i,h) in hists.iter().enumerate() {
+        for (i,h) in hists.iter().enumerate().rev() {
             match h {
                 Some(m) => p.add_other(m, len_fac(i)
                        * ((max_occs) / (m.total_occs))
