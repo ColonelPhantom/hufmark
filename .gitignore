@@ -5,3 +5,4 @@ enwik*.gz
 enwik*.lz4
 enwik*.xz
 perf.data*
+heaptrack.*.gz
