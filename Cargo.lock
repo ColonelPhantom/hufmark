@@ -21,7 +21,7 @@ version = "0.1.0"
 dependencies = [
  "derivative 1.0.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "fnv 1.0.6 (registry+https://github.com/rust-lang/crates.io-index)",
- "plain-map 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "plain-map 2.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "slice-deque 0.2.4 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
@@ -40,8 +40,11 @@ dependencies = [
 
 [[package]]
 name = "plain-map"
-version = "0.1.0"
+version = "2.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "smallvec-stableunion 0.6.10 (registry+https://github.com/rust-lang/crates.io-index)",
+]
 
 [[package]]
 name = "proc-macro2"
@@ -68,6 +71,11 @@ dependencies = [
  "mach 0.2.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "winapi 0.3.7 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
+
+[[package]]
+name = "smallvec-stableunion"
+version = "0.6.10"
+source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
 name = "syn"
@@ -108,10 +116,11 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 "checksum fnv 1.0.6 (registry+https://github.com/rust-lang/crates.io-index)" = "2fad85553e09a6f881f739c29f0b00b0f01357c743266d478b68951ce23285f3"
 "checksum libc 0.2.61 (registry+https://github.com/rust-lang/crates.io-index)" = "c665266eb592905e8503ba3403020f4b8794d26263f412ca33171600eca9a6fa"
 "checksum mach 0.2.3 (registry+https://github.com/rust-lang/crates.io-index)" = "86dd2487cdfea56def77b88438a2c915fb45113c5319bfe7e14306ca4cd0b0e1"
-"checksum plain-map 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)" = "70f67a7cff8d5b93a84c1340ec978dcf6829ecbc8f1707be86d293023459830a"
+"checksum plain-map 2.0.0 (registry+https://github.com/rust-lang/crates.io-index)" = "b8c9b98e922e5e3e8f4d5a7138409ca91edc3e51940b06529d6befc764e340dd"
 "checksum proc-macro2 0.4.30 (registry+https://github.com/rust-lang/crates.io-index)" = "cf3d2011ab5c909338f7887f4fc896d35932e29146c12c8d01da6b22a80ba759"
 "checksum quote 0.6.13 (registry+https://github.com/rust-lang/crates.io-index)" = "6ce23b6b870e8f94f81fb0a363d65d86675884b34a09043c81e5562f11c1f8e1"
 "checksum slice-deque 0.2.4 (registry+https://github.com/rust-lang/crates.io-index)" = "ffddf594f5f597f63533d897427a570dbaa9feabaaa06595b74b71b7014507d7"
+"checksum smallvec-stableunion 0.6.10 (registry+https://github.com/rust-lang/crates.io-index)" = "a30e1d870c4e4788f40a49ac6c280f2dadbfa7600153660ce8d5c6540c43de68"
 "checksum syn 0.15.44 (registry+https://github.com/rust-lang/crates.io-index)" = "9ca4b3b69a77cbe1ffc9e198781b7acb0c7365a883670e8f1c1bc66fba79a5c5"
 "checksum unicode-xid 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)" = "fc72304796d0818e357ead4e000d19c9c174ab23dc11093ac919054d20a6a7fc"
 "checksum winapi 0.3.7 (registry+https://github.com/rust-lang/crates.io-index)" = "f10e386af2b13e47c89e7236a7a14a086791a2b88ebad6df9bf42040195cf770"
