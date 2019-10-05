@@ -6,7 +6,7 @@ use markov::Markov;
 
 pub type HistoryType = char;
 
-const HIST_LEN: usize = 10;
+const HIST_LEN: usize = 8;
 
 const PREDICT_TRIES: usize = 4;
 
@@ -29,7 +29,7 @@ fn main() {
     // let text = text_str.chars();
 
     let mut hist = History::new(HIST_LEN);
-    let mut markov = Markov::with_capacity(text.len());
+    let mut markov = Markov::with_capacity(text.len() * HIST_LEN / 16);
     // let mut markov = Markov::new();
     let mut correct = [0; PREDICT_TRIES];
     let mut wrong = 0;
@@ -58,11 +58,11 @@ fn main() {
     //     println!("Len {} happened {} times", l, occs);
     // }
 
-    // println!("Table pressure: {}/{}", markov.get_len(), markov.get_capacity());
+    println!("Table pressure: {}/{}", markov.get_len(), markov.get_capacity());
 
     // // println!("{:?}", markov);
 
-    // std::io::stdin().read_line(&mut String::new()).unwrap();
+    std::io::stdin().read_line(&mut String::new()).unwrap();
 
     // println!("MarkovValue size: {}", std::mem::size_of::<markov::MarkovValue<char>>());
     // println!("OptionVec size: {}", std::mem::size_of::<Option<Vec<char>>>());
