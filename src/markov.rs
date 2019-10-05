@@ -113,6 +113,13 @@ impl<T: Clone+Eq+Hash+Copy+PartialOrd +Ord+std::fmt::Display+std::fmt::Debug> Ma
                                 // Eg ello now not only represents hello but also jello
                                 // Therefore, this entry will be 'split'.
 
+                                if mv.possibilities.len() == 1 && mv.possibilities.iter().next().unwrap().0 == outcome {
+                                    // The prediction is the same as for the current value we are training on
+                                    // As such, we do not have to split(?)
+                                    mv.train(outcome);
+                                    break 'inclen;
+                                }
+
                                 // First, copy it out with an additional character (if possible)
                                 if i < k.len() {
                                     // Yes, it is possible. Continue.
