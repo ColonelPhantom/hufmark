@@ -9,8 +9,6 @@ use plain_map::PlainMap;
 use std::hash::Hash;
 use super::history::History;
 
-// use smallvec_stableunion::SmallVec;
-
 fn len_fac(len: usize) -> u32 {
     // len.pow(2) as u32
     // (len as u32 * 10) + 1
@@ -119,7 +117,6 @@ impl<T: Clone+Eq+Hash+Copy+PartialOrd +Ord+std::fmt::Display+std::fmt::Debug> Ma
                                     // The prediction is the same as for the current value we are training on
                                     // As such, we do not have to split(?)
                                     mv.train(outcome);
-                                    mv.full_key = None;
                                     break 'inclen;
                                 }
 
