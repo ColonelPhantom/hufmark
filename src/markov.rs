@@ -30,7 +30,7 @@ pub struct MarkovValue<T: Clone+Eq+Hash+std::fmt::Debug+Copy> {
     possibilities: PlainMap<T, u32>,
     total_occs: u32,
     #[derivative(Debug="ignore")]
-    pub full_key: Option<MarkovKey<T>>,
+    pub full_key: Option<Box<MarkovKey<T>>>,
 }
 impl<T: Clone+Eq+Hash+Copy+std::fmt::Debug> MarkovValue<T> {
     fn new() -> Self {
@@ -103,7 +103,7 @@ impl<T: Clone+Eq+Hash+Copy+PartialOrd +Ord+std::fmt::Display+std::fmt::Debug> Ma
                     match &mv.full_key {
                         Some(k) => {
                             // The entry is a 'shorthand' entry (ie. it is for ello but also represents hello)
-                            if k.as_ref() == past.get_slice(past.cur_len()) {
+                            if k.as_ref().as_ref() == past.get_slice(past.cur_len()) {
                                 // The shorthand stays valid
                                 mv.train(outcome);
                                 // Since we do not need any longer values to represent this, break.
@@ -136,7 +136,8 @@ impl<T: Clone+Eq+Hash+Copy+PartialOrd +Ord+std::fmt::Display+std::fmt::Debug> Ma
                     let mut new_mv: MarkovValue<T> = MarkovValue::default();
                     if i < past.cur_len() {
                         // We can create a shorthand entry to save memory.
-                        new_mv.full_key = Some(Box::from(past.get_slice(past.cur_len())));
+                        let temp_key: MarkovKey<T> = Box::from(past.get_slice(past.cur_len()));
+                        new_mv.full_key = Some(Box::from(temp_key));
                     }
                     // Make sure the new entry is properly trained
                     new_mv.train(outcome);
