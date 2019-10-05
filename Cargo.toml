@@ -6,8 +6,8 @@ edition = "2018"
 
 [dependencies]
 slice-deque = "0.2.4"
-plain-map = "1.*"
-# plain-map = {path = "../../plain-map"}
+plain-map = "2.*"
+# plain-map = {path = "../plain-map"}
 fnv="1.0.*"
 derivative = "1.0.3"
 

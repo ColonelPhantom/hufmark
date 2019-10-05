@@ -26,7 +26,7 @@ use derivative::Derivative;
 
 #[derive(Clone, Derivative)]
 #[derivative(Debug)]
-pub struct MarkovValue<T: Clone+Eq+Hash+std::fmt::Debug> {
+pub struct MarkovValue<T: Clone+Eq+Hash+std::fmt::Debug+Copy> {
     possibilities: PlainMap<T, u32>,
     total_occs: u32,
     #[derivative(Debug="ignore")]
@@ -75,7 +75,7 @@ pub type PredictType<T> = T;
 
 pub type Prediction<T> = Vec<(PredictType<T>, u32)>;
 
-pub struct Markov<T: Clone+Eq+Hash+std::fmt::Debug> {
+pub struct Markov<T: Clone+Eq+Hash+std::fmt::Debug+Copy> {
     hist: HashMap<MarkovKey<T>, MarkovValue<T>>,
 }
 impl<T: Clone+Eq+Hash+Copy+PartialOrd +Ord+std::fmt::Display+std::fmt::Debug> Markov<T> {
