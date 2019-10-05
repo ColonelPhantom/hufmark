@@ -9,3 +9,31 @@ SHORTHIST
 21.5s
 
 OK: 628279 - 371720 - 1
+
+
+master on enwik6:
+Correct [628279, 105795, 53975, 35945], wrong 176006
+721.7MB
+29.155s
+
+
+
+longhist on enwik6:
+Correct [628279, 105795, 53975, 35945], wrong 176006
+437.6MB
+15.79s
+
+longhist with plain-map-union:
+354.1MB
+
+
+shorthist on enwik6:
+Correct [628279, 105795, 53975, 35945], wrong 176006
+253.1MB
+15.01s
+
+shorthist with plain-map:
+~240MB
+
+shorthist with plain-map with union smallvec:
+~225MB
