@@ -12,7 +12,7 @@ const PREDICT_TRIES: usize = 4;
 
 
 fn main() {
-    println!("{}", std::mem::size_of::<std::collections::HashMap<char, f64>>());
+    // println!("{}", std::mem::size_of::<std::collections::HashMap<char, f64>>());
     
     let args: Vec<String> = std::env::args().collect();
     
@@ -64,10 +64,12 @@ fn main() {
 
     std::io::stdin().read_line(&mut String::new()).unwrap();
 
-    // println!("MarkovValue size: {}", std::mem::size_of::<markov::MarkovValue<char>>());
-    // println!("OptionVec size: {}", std::mem::size_of::<Option<Vec<char>>>());
-    // println!("OptionBox size: {}", std::mem::size_of::<Option<Box<[char]>>>());
-    // println!("BoxArray size: {}", std::mem::size_of::<Box<[char]>>());
+    println!("MarkovValue size: {}", std::mem::size_of::<markov::MarkovValue<char>>());
+    println!("PlainMap size: {}", std::mem::size_of::<plain_map::PlainMap<char, u32>>());
+    println!("Tuple size: {}", std::mem::size_of::<[(char, u32); 2]>());
+    println!("OptionVec size: {}", std::mem::size_of::<Option<Vec<char>>>());
+    println!("OptionBox size: {}", std::mem::size_of::<Option<Box<[char]>>>());
+    println!("BoxArray size: {}", std::mem::size_of::<Box<[char]>>());
     
 
 }

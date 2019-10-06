@@ -10,6 +10,7 @@ plain-map = "2.*"
 # plain-map = {path = "../plain-map"}
 fnv="1.0.*"
 derivative = "1.0.3"
+heap-vec = {path = "../../heap-vec"}
 
 [profile.release]
 opt-level = 3

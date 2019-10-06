@@ -16,11 +16,16 @@ version = "1.0.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
+name = "heap-vec"
+version = "0.1.0"
+
+[[package]]
 name = "hufmark"
 version = "0.1.0"
 dependencies = [
  "derivative 1.0.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "fnv 1.0.6 (registry+https://github.com/rust-lang/crates.io-index)",
+ "heap-vec 0.1.0",
  "plain-map 2.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "slice-deque 0.2.4 (registry+https://github.com/rust-lang/crates.io-index)",
 ]

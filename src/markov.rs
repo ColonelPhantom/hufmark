@@ -30,14 +30,15 @@ pub struct MarkovValue<T: Clone+Eq+Hash+std::fmt::Debug+Copy> {
     possibilities: PlainMap<T, u32>,
     total_occs: u32,
     #[derivative(Debug="ignore")]
-    pub full_key: Option<MarkovKey<T>>,
+    // pub full_key: Option<MarkovKey<T>>,
+    pub full_key: heap_vec::HeapVec<MarkovKey<T>>,
 }
 impl<T: Clone+Eq+Hash+Copy+std::fmt::Debug> MarkovValue<T> {
     fn new() -> Self {
         return Self {
             possibilities: PlainMap::new(),
             total_occs: 0,
-            full_key: None,
+            full_key: heap_vec::HeapVec::new(),
         }
     }
     fn train(&mut self, outcome: T) {
@@ -100,8 +101,9 @@ impl<T: Clone+Eq+Hash+Copy+PartialOrd +Ord+std::fmt::Display+std::fmt::Debug> Ma
                     let mv = e.get_mut();
                     // mv.train(outcome);
 
-                    match &mv.full_key {
-                        Some(k) => {
+                    match &mv.full_key.len() {
+                        1 => {
+                            let k = &mv.full_key[0]; 
                             // The entry is a 'shorthand' entry (ie. it is for ello but also represents hello)
                             if k.as_ref() == past.get_slice(past.cur_len()) {
                                 // The shorthand stays valid
@@ -129,21 +131,24 @@ impl<T: Clone+Eq+Hash+Copy+PartialOrd +Ord+std::fmt::Display+std::fmt::Debug> Ma
                                 // Then, train the one that will stay in this slot
                                 mv.train(outcome);
                                 // Remove the full key as this has multiple 'children' now and is not a shorthand anymore.
-                                mv.full_key = None;
+                                mv.full_key = heap_vec::HeapVec::new();
                             }
                         }
-                        None => {
+                        0 => {
                             // The entry is not a shorthand: train it regularly like a branch node
                             mv.train(outcome);
+                        }
+                        _ => {
+                            panic!("Unexpected more-than-1 full_key!");
+                        }
                     }
-                }
                 }
                 std::collections::hash_map::Entry::Vacant(e) => {
                     // We will create a new entry
                     let mut new_mv: MarkovValue<T> = MarkovValue::default();
                     if i < past.cur_len() {
                         // We can create a shorthand entry to save memory.
-                        new_mv.full_key = Some(Box::from(past.get_slice(past.cur_len())));
+                        new_mv.full_key.push(Box::from(past.get_slice(past.cur_len())));
                     }
                     // Make sure the new entry is properly trained
                     new_mv.train(outcome);
@@ -175,7 +180,7 @@ impl<T: Clone+Eq+Hash+Copy+PartialOrd +Ord+std::fmt::Display+std::fmt::Debug> Ma
                     // There is no matching entry found: try to see if the last entry was a shorthand and if so, reuse it.
                     if let Some(l) = hists.last() {
                         if let Some(entry) = l {
-                            if let Some(full_key) = &entry.full_key {
+                            if let Some(full_key) = &entry.full_key.get(0) {
                                 if full_key.len() >= i && &full_key[..i] == past_slice {
                                     // The previous hist entry is also applicable for this one
                                     hists.push(*hists.last().unwrap());
