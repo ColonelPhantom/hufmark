@@ -6,7 +6,7 @@ use markov::Markov;
 
 pub type HistoryType = char;
 
-const HIST_LEN: usize = 8;
+const HIST_LEN: usize = 4;
 
 const PREDICT_TRIES: usize = 4;
 
@@ -29,7 +29,7 @@ fn main() {
     // let text = text_str.chars();
 
     let mut hist = History::new(HIST_LEN);
-    let mut markov = Markov::with_capacity(text.len() * HIST_LEN / 16);
+    let mut markov = Markov::with_capacity(text.len() * HIST_LEN / 64);
     // let mut markov = Markov::new();
     let mut correct = [0; PREDICT_TRIES];
     let mut wrong = 0;
