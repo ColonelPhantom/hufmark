@@ -18,7 +18,7 @@ pub fn compress(text: Vec<u8>, mut output: BufWriter<File>) {
     let mut model = SourceModel::new(num_symbols as u32, 256);
 
     let mut hist = History::new(HIST_LEN);
-    let mut markov = Markov::with_capacity(text.len() * HIST_LEN / 64);
+    let mut markov = Markov::with_capacity(text.len() * HIST_LEN / 16);
     println!("Hashtable capacity: {}  ({} KB)", markov.get_capacity(), markov.get_capacity() * std::mem::size_of::<crate::markov::MarkovValue>() / 1024);
     // let mut markov = Markov::new();
 

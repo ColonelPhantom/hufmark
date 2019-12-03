@@ -7,9 +7,9 @@ use markov::Markov;
 
 pub type HistoryType = char;
 
-const HIST_LEN: usize = 4;
+const HIST_LEN: usize = 16;
 
-const PREDICT_TRIES: usize = 4;
+const PREDICT_TRIES: usize = 64;
 
 
 fn main() {
