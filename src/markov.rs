@@ -4,6 +4,7 @@ use fnv::FnvHashMap as HashMap;
 // use plain_map::PlainMap as HashMap;
 
 use plain_map::PlainMap;
+use tendril::Tendril;
 // use std::collections::HashMap as PlainMap;
 
 use std::hash::Hash;
@@ -26,13 +27,13 @@ use derivative::Derivative;
 
 #[derive(Clone, Derivative)]
 #[derivative(Debug)]
-pub struct MarkovValue<T: Clone+Eq+Hash+std::fmt::Debug+Copy> {
-    possibilities: PlainMap<T, u32>,
+pub struct MarkovValue {
+    possibilities: PlainMap<u8, u32>,
     total_occs: u32,
     #[derivative(Debug="ignore")]
-    pub full_key: Option<MarkovKey<T>>,
+    pub full_key: Option<MarkovKey>,
 }
-impl<T: Clone+Eq+Hash+Copy+std::fmt::Debug> MarkovValue<T> {
+impl MarkovValue {
     fn new() -> Self {
         return Self {
             possibilities: PlainMap::new(),
@@ -40,7 +41,7 @@ impl<T: Clone+Eq+Hash+Copy+std::fmt::Debug> MarkovValue<T> {
             full_key: None,
         }
     }
-    fn train(&mut self, outcome: T) {
+    fn train(&mut self, outcome: u8) {
         *self.possibilities.entry(outcome).or_default() += 1;
         self.total_occs += 1;
     }
@@ -58,7 +59,7 @@ impl<T: Clone+Eq+Hash+Copy+std::fmt::Debug> MarkovValue<T> {
         self.total_occs += other.total_occs * weight;
     }
 }
-impl<T: Clone+Eq+Hash+Copy+std::fmt::Debug> std::default::Default for MarkovValue<T> {
+impl std::default::Default for MarkovValue {
     fn default() -> Self {
         Self::new()
     }
@@ -69,16 +70,16 @@ impl<T: Clone+Eq+Hash+Copy+std::fmt::Debug> std::default::Default for MarkovValu
 //     values: [char; HISTORY_LEN],
 // }
 
-type MarkovKey<T> = Box<[T]>;
+type MarkovKey = Tendril<tendril::fmt::Bytes, tendril::Atomic>;
 pub type PredictType<T> = T;
 
 
 pub type Prediction<T> = Vec<(PredictType<T>, u32)>;
 
-pub struct Markov<T: Clone+Eq+Hash+std::fmt::Debug+Copy> {
-    hist: HashMap<MarkovKey<T>, MarkovValue<T>>,
+pub struct Markov {
+    hist: HashMap<MarkovKey, MarkovValue>,
 }
-impl<T: Clone+Eq+Hash+Copy+PartialOrd +Ord+std::fmt::Display+std::fmt::Debug> Markov<T> {
+impl Markov {
     pub fn new() -> Self {
         Self {hist: HashMap::default()}
     }
@@ -86,7 +87,7 @@ impl<T: Clone+Eq+Hash+Copy+PartialOrd +Ord+std::fmt::Display+std::fmt::Debug> Ma
         Self {hist: HashMap::with_capacity_and_hasher(cap, Default::default())}
     }
     #[inline(never)]
-    pub fn train(&mut self, past: &History<T>, outcome: T) {
+    pub fn train(&mut self, past: &History<u8>, outcome: u8) {
         // TODO: train based on older data (not just last character)
 
         'inclen: for i in 0..=past.cur_len() {
@@ -95,7 +96,7 @@ impl<T: Clone+Eq+Hash+Copy+PartialOrd +Ord+std::fmt::Display+std::fmt::Debug> Ma
 
             let mut to_insert = None;
 
-            match self.hist.entry(Box::from(h)) {
+            match self.hist.entry(Tendril::from(h)) {
                 std::collections::hash_map::Entry::Occupied(mut e) => {
                     let mv = e.get_mut();
                     // mv.train(outcome);
@@ -133,10 +134,10 @@ impl<T: Clone+Eq+Hash+Copy+PartialOrd +Ord+std::fmt::Display+std::fmt::Debug> Ma
                 }
                 std::collections::hash_map::Entry::Vacant(e) => {
                     // We will create a new entry
-                    let mut new_mv: MarkovValue<T> = MarkovValue::default();
+                    let mut new_mv: MarkovValue = MarkovValue::default();
                     if i < past.cur_len() {
                         // We can create a shorthand entry to save memory.
-                        new_mv.full_key = Some(Box::from(past.get_slice(past.cur_len())));
+                        new_mv.full_key = Some(Tendril::from(past.get_slice(past.cur_len())));
                     }
                     // Make sure the new entry is properly trained
                     new_mv.train(outcome);
@@ -150,12 +151,12 @@ impl<T: Clone+Eq+Hash+Copy+PartialOrd +Ord+std::fmt::Display+std::fmt::Debug> Ma
             
             // We could not store the extended shorthand in the match, so do it now.
             if let Some((k,v)) = to_insert {
-                self.hist.insert(Box::from(k.as_slice()),v);
+                self.hist.insert(Tendril::from(k.as_slice()),v);
             }
         }
     }
     #[inline(never)]
-    pub fn predict(&self, past: &History<T>) -> Prediction<T> {
+    pub fn predict(&self, past: &History<u8>) -> Prediction<u8> {
         // TODO: predict based on stuff thats longer ago
 
         // Find the appropriate history entries, cache them in a Vec to reduce hashtable retrieves
@@ -229,7 +230,7 @@ impl<T: Clone+Eq+Hash+Copy+PartialOrd +Ord+std::fmt::Display+std::fmt::Debug> Ma
         //     v.sort_by(|(_, a), (_, b)| b.partial_cmp(a).unwrap());
         //     return v;
         // }
-        let mut v: Prediction<T> = p.possibilities.iter()
+        let mut v: Prediction<u8> = p.possibilities.iter()
                 .filter(|(_, val)| *val > 0)
                 .map(|(a,b)| (*a,*b))
                 .collect();

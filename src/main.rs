@@ -23,7 +23,7 @@ fn main() {
     };
 
     let text: Vec<_> = std::fs::read(fname).unwrap().into_iter()
-        .map(|c| c as char)
+        .map(|c| c as u8)
         .collect();
     // let text_str = std::fs::read_to_string(&args[1]).unwrap();
     // let text = text_str.chars();
@@ -38,7 +38,7 @@ fn main() {
     for c in text {
         let prediction = markov.predict(&hist);
         
-        match prediction.into_iter().take(PREDICT_TRIES).position(|(pc, _val):(char, u32)| pc == c) {
+        match prediction.into_iter().take(PREDICT_TRIES).position(|(pc, _val):(u8, u32)| pc == c) {
             Some(i) => correct[i] += 1,
             None => wrong += 1,
         }
