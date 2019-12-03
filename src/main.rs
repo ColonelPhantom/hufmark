@@ -30,6 +30,7 @@ fn main() {
 
     let mut hist = History::new(HIST_LEN);
     let mut markov = Markov::with_capacity(text.len() * HIST_LEN / 64);
+    println!("Hashtable capacity: {}  ({} KB)", markov.get_capacity(), markov.get_capacity() * std::mem::size_of::<markov::MarkovValue>() / 1024);
     // let mut markov = Markov::new();
     let mut correct = [0; PREDICT_TRIES];
     let mut wrong = 0;
