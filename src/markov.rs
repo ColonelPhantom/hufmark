@@ -7,7 +7,6 @@ use plain_map::PlainMap;
 use tendril::Tendril;
 // use std::collections::HashMap as PlainMap;
 
-use std::hash::Hash;
 use super::history::History;
 
 fn len_fac(len: usize) -> u32 {
@@ -205,7 +204,7 @@ impl Markov {
         }
 
         // Create a prediction for the next value
-        let mut p = &mut MarkovValue::new();
+        let p = &mut MarkovValue::new();
         for (i,h) in hists.iter().enumerate().rev() {
             match h {
                 Some(m) => p.add_other(m, len_fac(i)
@@ -217,7 +216,7 @@ impl Markov {
             }
         }
         
-        let vec: Vec<_> = p.possibilities.iter().filter(|(_,v)| *v > 0).collect();
+        // let vec: Vec<_> = p.possibilities.iter().filter(|(_,v)| *v > 0).collect();
         // if vec.is_empty() {
         //     let empty_markov = MarkovValue::new();
         //     let p = self.hist.get(&vec![]).unwrap_or(&empty_markov);
