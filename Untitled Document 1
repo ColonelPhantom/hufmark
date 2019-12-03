@@ -10,6 +10,7 @@ SHORTHIST
 
 OK: 628279 - 371720 - 1
 
+<<<<<<< HEAD
 
 master on enwik6:
 Correct [628279, 105795, 53975, 35945], wrong 176006
@@ -37,3 +38,10 @@ shorthist with plain-map:
 
 shorthist with plain-map with union smallvec:
 ~225MB
+=======
+SHORTHIST-18
+350 MB or so (64-bit)
+255 MB (32-bit)
+
+less than 18s
+>>>>>>> arcode

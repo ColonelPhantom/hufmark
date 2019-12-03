@@ -6,10 +6,12 @@ edition = "2018"
 
 [dependencies]
 slice-deque = "0.2.4"
-plain-map = "0.*"
-# plain-map = {path = "../../plain-map"}
+plain-map = "2.*"
+# plain-map = {path = "../plain-map"}
 fnv="1.0.*"
 derivative = "1.0.3"
+tendril = "0.4.1"
+arcode = "0.1.2"
 
 [profile.release]
 opt-level = 3
